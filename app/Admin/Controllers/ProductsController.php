@@ -86,7 +86,7 @@ class ProductsController extends Controller
         // $grid->description('Description');
         // $grid->image('Image');
         $grid->on_sale('已上架')->disply(function($value){
-          return $value?'是':'否';
+          return $value ? '是':'否';
         });
 
         $grid->rating('评分');
