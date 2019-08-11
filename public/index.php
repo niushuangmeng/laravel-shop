@@ -6,7 +6,37 @@
  * @package  Laravel
  * @author   Taylor Otwell <taylor@laravel.com>
  */
-
+// $course = function($test_vale){
+//   echo($test_vale."VIP课程");
+// };
+// $course('php中文网');
+//
+// function no_name_callback(){
+//   return "php中文网";
+// }
+// $no_name = function ($callback){
+//   echo $callback()."VIP课程";
+// };
+// $no_name("no_name_callback");
+//
+// $closure = function($name){
+//   return sprintf('Hello %s',$name);
+// };
+// echo $closure('Yee Jason');
+//
+// $numberPlusOne = array_map(function($number){//
+//   return $number +1;
+// },[1,2,3]);
+// print_r($numberPlusOne);
+// function enclosePerson($name){
+//   return function($doCommand) use ($name){
+//     return sprintf('%s,%s',$name,$doCommand);
+//   };
+// }
+// $clay = enclosePerson('Clay');
+// var_dump($clay);
+// echo $clay('get me sweet tea!');
+// exit;
 define('LARAVEL_START', microtime(true));
 
 /*
