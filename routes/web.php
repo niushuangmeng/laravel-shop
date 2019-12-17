@@ -16,7 +16,6 @@ Route::get('/', function () {
 });
 Route::redirect('/','/products')->name('root');
 Route::get('products','ProductsController@index')->name('products.index');
-Route::get('products/{product}','ProductsController@show')->name('products.show');
 
 Auth::routes(['verify' => true]);
 
@@ -33,12 +32,18 @@ function(){
    Route::post('cart','CartController@add')->name('cart.add');
    Route::get('cart','CartController@index')->name('cart.index');
    Route::delete('cart/{sku}', 'CartController@remove')->name('cart.remove');
+   Route::get('payment/{order}/alipay','PaymentController@payByAlipay')->name('payment.alipay');
+   Route::get('payment/alipay/return','PaymentController@alipayReturn')->name('payment.alipay.return');
+   Route::get('products/favorites','ProductsController@favorites')->name('products.favorites');
 
 });
-Route::get('alipay',function (){
-    return app('alipay')->web([
-        'out_trade_no' => time(),
-        'total_amount' => '1',
-        'subject' => 'test subject - 测试',
-    ]);
-});
+Route::get('products/{product}','ProductsController@show')->name('products.show');
+
+  Route::post('payment/alipay/notify','PaymentController@alipayNotify')->name('payment.alipay.notify');
+//Route::get('alipay',function (){
+//    return app('alipay')->web([
+//        'out_trade_no' => time(),
+//        'total_amount' => '1',
+//        'subject' => 'test subject - 测试',
+//    ]);
+//});

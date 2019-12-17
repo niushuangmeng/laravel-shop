@@ -32,7 +32,11 @@
         </div>
         <div class="cart_amount"><label>数量</label><input type="text" class="form-control form-control-sm" value="1"><span>件</span><span class="stock"></span></div>
         <div class="buttons">
+          @if($favored)
+          <button class="btn btn-danger btn-disfavor">取消收藏</button>
+          @else
           <button class="btn btn-success btn-favor">❤ 收藏</button>
+          @endif
           <button class="btn btn-primary btn-add-to-cart">加入购物车</button>
         </div>
       </div>
@@ -70,10 +74,14 @@
 
     $('.btn-favor').click(function () {
      // 发起一个 post ajax 请求，请求 url 通过后端的 route() 函数生成。
-     axios.post('{{ route('products.favor', ['product' => $product->id]) }}')
+        axios.post('{{ route('products.favor', ['product' => $product->id]) }}')
        .then(function () { // 请求成功会执行这个回调
-         swal('操作成功', '', 'success');
-       }, function(error) { // 请求失败会执行这个回调
+         swal('操作成功', '', 'success')
+       .then(function () {  // 这里加了一个 then() 方法
+               location.reload();
+           });
+       }, function(error) {
+           console.log(error.response)// 请求失败会执行这个回调
          // 如果返回码是 401 代表没登录
          if (error.response && error.response.status === 401) {
            swal('请先登录', '', 'error');
@@ -87,44 +95,53 @@
        });
    });
 
-   {{--// 加入购物车按钮点击事件--}}
-    {{--$('.btn-add-to-cart').click(function () {--}}
+   // 加入购物车按钮点击事件
+    $('.btn-add-to-cart').click(function () {
 
-      {{--// 请求加入购物车接口--}}
-      {{--axios.post('{{ route('cart.add') }}', {--}}
-        {{--sku_id: $('label.active input[name=skus]').val(),--}}
-        {{--amount: $('.cart_amount input').val(),--}}
-      {{--})--}}
-        {{--.then(function () { // 请求成功执行此回调--}}
-          {{--swal('加入购物车成功', '', 'success')--}}
-          {{--.then(function() {--}}
-          {{--location.href = '{{ route('cart.index') }}';--}}
-        {{--});--}}
-        {{--}, function (error) { // 请求失败执行此回调--}}
-          {{--if (error.response.status === 401) {--}}
+      // 请求加入购物车接口
+      axios.post('{{ route('cart.add') }}', {
+        sku_id: $('label.active input[name=skus]').val(),
+        amount: $('.cart_amount input').val(),
+      })
+        .then(function () { // 请求成功执行此回调
+          swal('加入购物车成功', '', 'success')
+          .then(function() {
+          location.href = '{{ route('cart.index') }}';
+        });
+        }, function (error) { // 请求失败执行此回调
+          if (error.response.status === 401) {
 
-            {{--// http 状态码为 401 代表用户未登陆--}}
-            {{--swal('请先登录', '', 'error');--}}
+            // http 状态码为 401 代表用户未登陆
+            swal('请先登录', '', 'error');
 
-          {{--} else if (error.response.status === 422) {--}}
+          } else if (error.response.status === 422) {
 
-            {{--// http 状态码为 422 代表用户输入校验失败--}}
-            {{--var html = '<div>';--}}
-            {{--_.each(error.response.data.errors, function (errors) {--}}
-              {{--_.each(errors, function (error) {--}}
-                {{--html += error+'<br>';--}}
-              {{--})--}}
-            {{--});--}}
-            {{--html += '</div>';--}}
-            {{--swal({content: $(html)[0], icon: 'error'})--}}
-          {{--} else {--}}
+            // http 状态码为 422 代表用户输入校验失败
+            var html = '<div>';
+            _.each(error.response.data.errors, function (errors) {
+              _.each(errors, function (error) {
+                html += error+'<br>';
+              })
+            });
+            html += '</div>';
+            swal({content: $(html)[0], icon: 'error'})
+          } else {
 
-            {{--// 其他情况应该是系统挂了--}}
-            {{--swal('系统错误', '', 'error');--}}
-          {{--}--}}
-        {{--})--}}
-    {{--});--}}
+            // 其他情况应该是系统挂了
+            swal('系统错误', '', 'error');
+          }
+        })
+    });
 
+      $('.btn-disfavor').click(function () {
+          axios.delete('{{ route('products.disfavor', ['product' => $product->id]) }}')
+              .then(function () {
+                  swal('操作成功', '', 'success')
+                      .then(function () {
+                          location.reload();
+                      });
+              });
+      });
 
   });
 </script>
